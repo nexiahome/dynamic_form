@@ -106,17 +106,7 @@ module ActionView
       #       :html_tag => "span",
       #       :css_class => "inputError" %>
       #   # => <span class="inputError">Title simply can't be empty (or it won't work).</span>
-      def error_message_on(object, method, *args)
-        options = args.extract_options!
-        unless args.empty?
-          ActiveSupport::Deprecation.warn('error_message_on takes an option hash instead of separate ' +
-            'prepend_text, append_text, html_tag, and css_class arguments', caller)
-
-          options[:prepend_text] = args[0] || ''
-          options[:append_text] = args[1] || ''
-          options[:html_tag] = args[2] || 'div'
-          options[:css_class] = args[3] || 'formError'
-        end
+      def error_message_on(object, method, options = {})
         options.reverse_merge!(:prepend_text => '', :append_text => '', :html_tag => 'div', :css_class => 'formError')
 
         object = convert_to_model(object)
