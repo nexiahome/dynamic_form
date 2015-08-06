@@ -110,9 +110,9 @@ module ActionView
         options.reverse_merge!(:prepend_text => '', :append_text => '', :html_tag => 'div', :css_class => 'formError')
 
         object = convert_to_model(object)
+        object = object && (object.respond_to?(:errors) ? object : instance_variable_get("@#{object}"))
 
-        if (obj = (object.respond_to?(:errors) ? object : instance_variable_get("@#{object}"))) &&
-          (errors = obj.errors[method]).presence
+        if object && (errors = object.errors[method]).present?
           content_tag(options[:html_tag],
             (options[:prepend_text].html_safe << errors.first).safe_concat(options[:append_text]),
             :class => options[:css_class]
