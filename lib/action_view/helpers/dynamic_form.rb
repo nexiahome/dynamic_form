@@ -112,14 +112,18 @@ module ActionView
         object = convert_to_model(object)
         object = object && (object.respond_to?(:errors) ? object : instance_variable_get("@#{object}"))
 
-        if object && (errors = object.errors[method]).present?
-          content_tag(options[:html_tag],
-            (options[:prepend_text].html_safe << errors.first).safe_concat(options[:append_text]),
-            :class => options[:css_class]
-          )
-        else
-          ''
+        errors = object && object.errors[method]
+        result = ''.html_safe
+        if errors.present?
+          errors = errors[0, 1]
+          errors.each do |error|
+            result << content_tag(options[:html_tag],
+              (options[:prepend_text].html_safe << error) << options[:append_text],
+              :class => options[:css_class]
+            )
+          end
         end
+        result
       end
 
       # Returns a string with a <tt>DIV</tt> containing all of the error messages for the objects located as instance variables by the names
