@@ -117,6 +117,7 @@ module ActionView
         if errors.present?
           errors = errors[0, 1]
           errors.each do |error|
+            error = ActiveModel::Errors.fix_if_full_message(error)
             result << content_tag(options[:html_tag],
               (options[:prepend_text].html_safe << error) << options[:append_text],
               :class => options[:css_class]
