@@ -9,11 +9,11 @@ module ActiveModel
       return message if attribute == :base
       attr_name = attribute.to_s.gsub('.', '_').humanize
       attr_name = @base.class.human_attribute_name(attribute, :default => attr_name)
-      if message[0] == '^'
+      if self.class.is_full_message(message)
         I18n.t(:"errors.dynamic_format", {
           :default   => "%{message}",
           :attribute => attr_name,
-          :message   => message[1..-1]
+          :message   => self.class.fix_if_full_message(message)
         })
       else
         I18n.t(:"errors.format", {
@@ -22,6 +22,16 @@ module ActiveModel
           :message   => message
         })
       end
+    end
+
+    FULL_MESSAGE_MARKER = '^'
+
+    def self.is_full_message(message)
+      message[0] == FULL_MESSAGE_MARKER
+    end
+
+    def self.fix_if_full_message(message)
+      is_full_message(message) ? message[1..-1] : message
     end
   end
 end
