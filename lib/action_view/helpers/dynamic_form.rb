@@ -107,7 +107,7 @@ module ActionView
       #       :css_class => "inputError" %>
       #   # => <span class="inputError">Title simply can't be empty (or it won't work).</span>
       def error_message_on(object, method, options = {})
-        options.reverse_merge!(:prepend_text => '', :append_text => '', :html_tag => 'div', :css_class => 'formError')
+        options = self.class.dynamic_form_options[:error_message_on].merge(options)
 
         object = convert_to_model(object)
         object = object && (object.respond_to?(:errors) ? object : instance_variable_get("@#{object}"))
@@ -174,7 +174,9 @@ module ActionView
       # you need is significantly different from the default presentation, it makes plenty of sense to access the <tt>object.errors</tt>
       # instance yourself and set it up. View the source of this method to see how easy it is.
       def error_messages_for(*params)
-        options = params.extract_options!.symbolize_keys
+        options = self.class.dynamic_form_options[:error_messages_for].merge(
+          params.extract_options!.symbolize_keys
+        )
 
         objects = Array.wrap(options.delete(:object) || params).map do |object|
           object = instance_variable_get("@#{object}") unless object.respond_to?(:to_model)
@@ -191,15 +193,7 @@ module ActionView
         count = objects.inject(0) {|sum, object| sum + object.errors.count }
 
         unless count.zero?
-          html = {}
-          [:id, :class].each do |key|
-            if options.include?(key)
-              value = options[key]
-              html[key] = value unless value.blank?
-            else
-              html[key] = 'error_explanation'
-            end
-          end
+          html = options.slice(:id, :class)
           options[:object_name] ||= params.first
 
           I18n.with_options :locale => options[:locale], :scope => [:errors, :template] do |locale|
@@ -218,7 +212,7 @@ module ActionView
             end.join.html_safe
 
             contents = ''
-            contents << content_tag(options[:header_tag] || :h2, header_message) unless header_message.blank?
+            contents << content_tag(options[:header_tag], header_message) unless header_message.blank?
             contents << content_tag(:p, message) unless message.blank?
             contents << content_tag(:ul, error_messages)
 
@@ -230,6 +224,23 @@ module ActionView
       end
 
     private
+
+      def self.included(base)
+        base.cattr_accessor :dynamic_form_options, instance_accessor: false
+        base.dynamic_form_options = {
+          error_message_on: {
+            prepend_text: '',
+            append_text: '',
+            html_tag: :div,
+            css_class: 'formError'
+          },
+          error_messages_for: {
+            id: 'error_explanation',
+            class: 'error_explanation',
+            header_tag: :h2
+          }
+        }
+      end
 
       def all_input_tags(record, record_name, options)
         input_block = options[:input_block] || default_input_block
