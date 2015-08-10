@@ -10,7 +10,6 @@ begin
     gem.email = "joel@developwithstyle.com"
     gem.homepage = "http://codaset.com/joelmoss/dynamic-form"
     gem.authors = ["Joel Moss"]
-    gem.add_development_dependency "mocha", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
