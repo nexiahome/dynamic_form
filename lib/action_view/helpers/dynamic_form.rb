@@ -128,6 +128,14 @@ module ActionView
         result
       end
 
+      def error_messages_on(object, method, options = {})
+        error_message_on(object, method, options.merge(all: true))
+      end
+
+      def full_error_messages_on(object, method, options = {})
+        error_message_on(object, method, options.merge(full: true, all: true))
+      end
+
       # Returns a string with a <tt>DIV</tt> containing all of the error messages for the objects located as instance variables by the names
       # given.  If more than one object is specified, the errors for the objects are displayed in the order that the object names are
       # provided.
@@ -286,6 +294,14 @@ module ActionView
       module FormBuilderMethods
         def error_message_on(method, *args)
           @template.error_message_on(@object || @object_name, method, *args)
+        end
+
+        def error_messages_on(method, *args)
+          @template.error_messages_on(@object || @object_name, method, *args)
+        end
+
+        def full_error_messages_on(method, *args)
+          @template.full_error_messages_on(@object || @object_name, method, *args)
         end
 
         def error_messages(options = {})
