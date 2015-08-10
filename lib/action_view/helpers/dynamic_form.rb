@@ -112,12 +112,13 @@ module ActionView
         object = convert_to_model(object)
         object = object && (object.respond_to?(:errors) ? object : instance_variable_get("@#{object}"))
 
-        errors = object && object.errors[method]
+        errors = object && (options[:full] ? object.errors.full_messages_for(method) : object.errors[method])
         result = ''.html_safe
         if errors.present?
-          errors = errors[0, 1]
+          errors = errors[0, 1] if !options[:all]
           errors.each do |error|
             error = ActiveModel::Errors.fix_if_full_message(error)
+            error = error.html_safe if options[:html_safe]
             result << content_tag(options[:html_tag],
               (options[:prepend_text].html_safe << error) << options[:append_text],
               :class => options[:css_class]

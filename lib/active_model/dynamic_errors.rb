@@ -33,6 +33,13 @@ module ActiveModel
     def self.fix_if_full_message(message)
       is_full_message(message) ? message[1..-1] : message
     end
+
+    def full_messages_for(attribute)
+      attribute = attribute.to_sym
+      Array.wrap(messages[attribute]).map do |message|
+        full_message(attribute, message)
+      end
+    end
   end
 end
 
