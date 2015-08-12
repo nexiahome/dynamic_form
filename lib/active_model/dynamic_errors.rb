@@ -34,10 +34,9 @@ module ActiveModel
       is_full_message(message) ? message[1..-1] : message
     end
 
-    def full_messages_for(attribute)
-      attribute = attribute.to_sym
-      Array.wrap(messages[attribute]).map do |message|
-        full_message(attribute, message)
+    if !method_defined? :full_messages_for
+      def full_messages_for(attribute)
+        (get(attribute) || []).map { |message| full_message(attribute, message) }
       end
     end
   end
