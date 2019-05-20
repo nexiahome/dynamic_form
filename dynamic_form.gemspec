@@ -52,5 +52,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rails>, [">= 3.2"])
     s.add_dependency(%q<mocha>, [">= 0"])
   end
+
+  s.add_development_dependency "rake", "~> 12.3"
 end
 
