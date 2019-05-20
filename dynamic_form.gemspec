@@ -54,5 +54,6 @@ Gem::Specification.new do |s|
   end
 
   s.add_development_dependency "rake", "~> 12.3"
+  s.add_development_dependency "test-unit", "~> 3.3"
 end
 
