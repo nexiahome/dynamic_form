@@ -1,6 +1,4 @@
-source 'https://rubygems.org'
+# frozen_string_literal: true
 
-gem 'rails', '>= 3.2'
-group :development do
-  gem 'mocha'
-end
+source 'https://rubygems.org'
+gemspec
